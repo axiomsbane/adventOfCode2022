@@ -1,4 +1,8 @@
-module Main where
+#!/usr/bin/env cabal
+{- cabal:
+build-depends: base
+            , split
+-}
 
 import Data.List.Split (splitOn)
 import Data.List (sort)
