@@ -13,11 +13,15 @@ import Data.Char (isUpper, isAlpha)
 strToInt :: String -> Int
 strToInt = read
 
-simulate :: (DM.Map Int [String]) -> [Int] -> (DM.Map Int [String])
-simulate mp [amt, frm, tu] = DM.insert frm remrem $ DM.insert tu attu mp
+fn :: [String] -> [String]
+-- fn = reverse -- for part 1
+fn = id -- part 2
+
+simulate :: ([String] -> [String]) -> (DM.Map Int [String]) -> [Int] -> (DM.Map Int [String])
+simulate ff mp [amt, frm, tu] = DM.insert frm remrem $ DM.insert tu attu mp
     where 
         (takeOut, remrem) = splitAt amt (mp DM.! frm)
-        attu = (reverse takeOut) ++ (mp DM.! tu) 
+        attu = (ff takeOut) ++ (mp DM.! tu) 
 
 jusDoIt :: Maybe [String] -> String
 jusDoIt (Just []) = ""
@@ -35,7 +39,7 @@ main = do
         mappu = DM.fromList $ zip [1..(length useCrate)] useCrate
         movesBoi = map (words . trim . filter (not .isAlpha)) moveUse
         movvu = (map . map) strToInt movesBoi
-        finMap = foldl simulate mappu movvu
+        finMap = foldl (simulate fn) mappu movvu
         getVals = (map (\x -> DM.lookup x finMap) [1..(length useCrate)])
         makeAns1 = filter (\x -> x /= '[' && x /= ']') $ concatMap jusDoIt getVals
     print makeAns1
