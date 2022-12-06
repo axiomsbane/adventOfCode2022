@@ -3,12 +3,14 @@
    --resolver lts-19.28
    --package base,split,extra,containers
 -}
+{-# LANGUAGE  ScopedTypeVariables #-}
 
 import Data.List.Split (splitOn, chunksOf)
 import Data.List.Extra (trim)
 import Data.List (transpose)
 import qualified Data.Map as DM 
 import Data.Char (isUpper, isAlpha)
+import Control.Arrow ((>>>),(<<<))
 
 strToInt :: String -> Int
 strToInt = read
@@ -33,14 +35,14 @@ main = do
     let sprittu = splitOn "\n\n" inp
         crateUse = init $ lines $ head sprittu
         moveUse = lines (sprittu !! 1)
-        nonTrim = map (chunksOf 4) crateUse
-        finCrate = transpose $ (map . map) trim nonTrim
-        useCrate = map (filter (""/=)) finCrate
-        mappu = DM.fromList $ zip [1..(length useCrate)] useCrate
-        movesBoi = map (words . trim . filter (not .isAlpha)) moveUse
-        movvu = (map . map) strToInt movesBoi
+        nonTrim = map (chunksOf 4) crateUse 
+        mappu = DM.fromList $ zip [1..9] 
+                <<< map (filter (""/=)) 
+                <<< transpose $ (map . map) trim nonTrim 
+        movvu :: [[Int]] = (map . map) strToInt 
+                <<< map (words . trim . filter (not .isAlpha)) $ moveUse
         finMap = foldl (simulate fn) mappu movvu
-        getVals = (map (\x -> DM.lookup x finMap) [1..(length useCrate)])
-        makeAns1 = filter (\x -> x /= '[' && x /= ']') $ concatMap jusDoIt getVals
+        makeAns1 = filter (\x -> x /= '[' && x /= ']') $ concatMap jusDoIt
+                <<< map (\x -> DM.lookup x finMap) $ [1..9]
     print makeAns1
     
