@@ -5,7 +5,7 @@
 -}
 
 import Data.Containers.ListUtils (nubOrd)
-globSz = 14
+globSz = 14 
 
 sol :: [Char] -> Int -> Int
 sol lis ctr = case globSz == (length . nubOrd $ (take globSz lis)) of
