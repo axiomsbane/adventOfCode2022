@@ -33,6 +33,7 @@ upd :: Int -> [String] -> (M.Map String Int) -> (M.Map String Int)
 upd _ [] mp = mp
 upd val (x:xs) mp = upd val xs (M.adjust (+ val) x mp)
 
+-- UUID -> instructions -> trackingStack -> Directory Size tracker map -> final Map
 solv :: Int -> [String] -> [String] -> (M.Map String Int) -> (M.Map String Int)
 solv uuid (x:xs) stk szCtr 
     | isCd = if rem1 == ".." 
