@@ -49,6 +49,8 @@ solv _ [] _ szCtr = szCtr
 req = 30000000
 tot = 70000000
 
+-- Hacky way to get out of Maybe in 
+-- this problem scenario
 utir :: Maybe Int -> Int 
 utir (Just x) = x
 utir Nothing = 0
