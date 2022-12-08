@@ -37,10 +37,10 @@ upd val (x:xs) mp = upd val xs (M.adjust (+ val) x mp)
 solv :: Int -> [String] -> [String] -> (M.Map String Int) -> (M.Map String Int)
 solv uuid (x:xs) stk szCtr 
     | isCd = if rem1 == ".." 
-             then solv (1+uuid) xs (pop stk) szCtr
+             then solv uuid xs (pop stk) szCtr
              else solv (1+uuid) xs (push stk rem) (M.insert rem 0 szCtr) 
-    | b1 || b2 = solv (1+uuid) xs stk szCtr
-    | otherwise = solv (1+uuid) xs stk <<< upd (strToInt $ takeWhile isNumber x) stk $ szCtr
+    | b1 || b2 = solv uuid xs stk szCtr
+    | otherwise = solv uuid xs stk <<< upd (strToInt $ takeWhile isNumber x) stk $ szCtr
     where   
         (isCd, rem1) = markPref x
         [b1, b2] = map ($ x) passPref
