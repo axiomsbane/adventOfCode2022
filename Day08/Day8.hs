@@ -28,8 +28,8 @@ solv rLim cLim trees l r u d p@(x,y)
         pu = (x-1,y)
         pd = (x+1,y)
 
-solv2 :: Int -> Int -> Arr -> Arr -> Arr -> Arr -> Arr -> Idx -> Int
-solv2 rLim cLim trees l r u d p@(x,y) = 
+solv2 :: Int -> Int -> Arr -> Idx -> Int
+solv2 rLim cLim trees p@(x,y) = 
     product [
         takeUntil cur 1 (map (x,) dl) trees,
         takeUntil cur 1 (map (x,) dr) trees,
@@ -64,7 +64,7 @@ main = do
         dow = array ((1,1), (r, c)) $ zip inds $ concat bottomMaxlis
         arr = array ((1,1), (r, c)) $ zip inds $ concat leftRight
         solv1 = map (solv r c arr lef rig top dow) inds
-        ans2 = map (solv2 r c arr lef rig top dow) fInds
+        ans2 = map (solv2 r c arr) fInds
     print $ length $ filter (==True) solv1 -- ans1
     print $ maximum ans2 -- ans2
 
