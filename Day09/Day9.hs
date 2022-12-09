@@ -14,7 +14,7 @@ newtype Pos = Pos {pos :: (Int, Int)}
     deriving (Show,Eq,Ord)
 data Track = Track {head :: Pos, tail :: Pos}
     deriving (Show)
-    
+
 sToI :: String -> Int
 sToI = read
 
@@ -39,7 +39,6 @@ calc trk@(Track he ta)
     | otherwise = Track he (ta + Pos (upd dx, upd dy))
     where 
         (dx,dy) = pos (he - ta)
-        (taX,taY) = pos ta
         hammDist = sum $ pos $ abs $ (he - ta)
 
 --HeadKnot -> tailKnots -> updates posis of knots
