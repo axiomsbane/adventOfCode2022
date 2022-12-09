@@ -26,17 +26,10 @@ instance Num Pos where
 sum :: (Int,Int) -> Int
 sum (x,y) = x+y
 
--- hamm > 2 only will come here
-upd :: Int -> Int
-upd val 
-    | val < -1 = -1
-    | val > 1 = 1
-    | otherwise = val
-
 calc :: Track -> Track
 calc trk@(Track he ta)
     | hammDist <= 2 && not ((dx==0 && (abs dy)==2) || ((abs dx)==2 && dy==0)) = trk
-    | otherwise = Track he (ta + Pos (upd dx, upd dy))
+    | otherwise = Track he (ta + Pos (signum dx, signum dy))
     where 
         (dx,dy) = pos (he - ta)
         hammDist = sum $ pos $ abs $ (he - ta)
