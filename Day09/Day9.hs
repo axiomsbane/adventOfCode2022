@@ -17,8 +17,8 @@ instance Num Pos where
     abs (Pos (x,y)) = Pos (abs x, abs y)
 
 zerPos = Pos (0,0)
-rope1 = [zerPos]
-rope2 = replicate 9 zerPos
+rope1 = replicate 2 zerPos
+rope2 = replicate 10 zerPos
 
 sToI :: String -> Int
 sToI = read
@@ -39,29 +39,20 @@ moveTail headPos tailPos
         (dx,dy) = pos (headPos - tailPos)
         chebyDist = max (abs dx) (abs dy)
 
-simulate :: [Pos] -> Pos -> [Pos] -> [Pos]
-simulate [] _ _ = []
-simulate (move:moves) headPos knots = last updRope : simulate moves updHeadPos updRope
+updateRope :: [Pos] -> Pos -> [Pos]
+updateRope rope move = scanl moveTail (headKnot + move) tailKnots
     where 
-        updHeadPos = headPos + move
-        updRope = tail $ scanl moveTail updHeadPos knots
+        (headKnot, tailKnots) = (head rope, tail rope)
 
--- Try to simplify simulate by converting into scanl 
--- not working rn for some reason
--- updateRope :: [Pos] -> Pos -> [Pos]
--- updateRope rope move = scanl moveTail (headKnot + move) tailKnots
---     where 
---         (headKnot, tailKnots) = (head rope, tail rope)
-
--- solve :: [Pos] -> [Pos] -> Int
--- solve rope moves = length $ nubOrd
---                     $ map last
---                     $ scanl updateRope rope moves
+solve :: [Pos] -> [Pos] -> Int
+solve rope moves = length $ nubOrd
+                    $ map last
+                    $ scanl updateRope rope moves
 main = do 
     inp <- readFile "input.txt"
     let input = lines inp
         ins = concatMap parseIns input 
-        ans1 = length $ nubOrd $ simulate ins zerPos rope1
-        ans2 = length $ nubOrd $ simulate ins zerPos rope2
+        ans1 = solve rope1 ins
+        ans2 = solve rope2 ins
     print ans1
     print ans2
