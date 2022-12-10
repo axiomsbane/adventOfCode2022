@@ -12,8 +12,6 @@ import Data.List (nub)
 type Vis = Set Pos
 newtype Pos = Pos {pos :: (Int, Int)}
     deriving (Show,Eq,Ord)
-data Track = Track {head :: Pos, tail :: Pos}
-    deriving (Show)
 
 sToI :: String -> Int
 sToI = read
@@ -23,28 +21,26 @@ instance Num Pos where
     (-) (Pos (x,y)) (Pos (w,z)) = Pos (x-w,y-z)
     abs (Pos (x,y)) = Pos (abs x, abs y)
 
-calc :: Track -> Track
-calc trk@(Track he ta)
-    | chebyDist <= 1 = trk
-    | otherwise = Track he (ta + Pos (signum dx, signum dy))
+updateRope :: Pos -> [Pos] -> [Pos]
+updateRope _ [] = []
+updateRope useHead (useTail:xs) = updTail : updateRope updTail xs
     where 
-        (dx,dy) = pos (he - ta)
+        updTail = moveTail useHead useTail
+
+moveTail :: Pos -> Pos -> Pos
+moveTail headPos tailPos
+    | chebyDist <= 1 = tailPos
+    | otherwise = tailPos + Pos (signum dx, signum dy)
+    where 
+        (dx,dy) = pos (headPos - tailPos)
         chebyDist = max (abs dx) (abs dy)
 
---HeadKnot -> tailKnots -> updates posis of knots
-propRope :: Pos -> [Pos] -> [Pos]
-propRope _ [] = []
-propRope he (x:xs) = newTe : propRope newTe xs
-    where 
-        tmp = calc $ Track he x 
-        newTe = tail tmp
-
-simulate :: [Pos] -> Pos -> [Pos] -> [Pos]
-simulate [] _ _ = []
-simulate (mov:movs) curHe knots = (last updKnots) : simulate movs updHe updKnots
+simulateClean :: [Pos] -> Pos -> [Pos] -> [Pos]
+simulateClean [] _ _ = []
+simulateClean (mov:movs) curHe knots = (last updKnots) : simulateClean movs updHe updKnots
     where 
         updHe = curHe + mov
-        updKnots = propRope updHe knots
+        updKnots = updateRope updHe knots
 
 zerPos = Pos (0,0)
 rope1 = [zerPos]
@@ -61,8 +57,7 @@ main = do
     inp <- readFile "input.txt"
     let input = lines inp
         ins = concatMap getPos input 
-        solvHelp2 = simulate ins zerPos rope2
-        ans2 = size $ fromList solvHelp2
-        ans1 = size $ fromList $ simulate ins zerPos rope1
-    print ans1
-    print ans2
+        ans2Clean = size $ fromList $ simulateClean ins zerPos rope2
+        ans1Clean = size $ fromList $ simulateClean ins zerPos rope1
+    print ans1Clean
+    print ans2Clean
