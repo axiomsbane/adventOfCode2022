@@ -23,16 +23,13 @@ instance Num Pos where
     (-) (Pos (x,y)) (Pos (w,z)) = Pos (x-w,y-z)
     abs (Pos (x,y)) = Pos (abs x, abs y)
 
-sum :: (Int,Int) -> Int
-sum (x,y) = x+y
-
 calc :: Track -> Track
 calc trk@(Track he ta)
-    | hammDist <= 2 && not ((dx==0 && (abs dy)==2) || ((abs dx)==2 && dy==0)) = trk
+    | chebyDist <= 1 = trk
     | otherwise = Track he (ta + Pos (signum dx, signum dy))
     where 
         (dx,dy) = pos (he - ta)
-        hammDist = sum $ pos $ abs $ (he - ta)
+        chebyDist = max (abs dx) (abs dy)
 
 --HeadKnot -> tailKnots -> updates posis of knots
 propRope :: Pos -> [Pos] -> [Pos]
