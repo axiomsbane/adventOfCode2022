@@ -22,12 +22,13 @@ rope2 = replicate 9 zerPos
 sToI :: String -> Int
 sToI = read
 
-parseInstructions :: String -> [Pos] 
-parseInstructions ('L' : ' ' : x) = replicate (sToI x) (Pos (-1,0))
-parseInstructions ('R' : ' ' : x) = replicate (sToI x) (Pos (1,0))
-parseInstructions ('U' : ' ' : x) = replicate (sToI x) (Pos (0,1))
-parseInstructions ('D' : ' ' : x) = replicate (sToI x) (Pos (0,-1))
-parseInstructions _ = []
+parseIns :: String -> [Pos] 
+parseIns str = case str of 
+    ('L' : ' ' : x) -> replicate (sToI x) (Pos (-1,0))
+    ('R' : ' ' : x) -> replicate (sToI x) (Pos (1,0))
+    ('U' : ' ' : x) -> replicate (sToI x) (Pos (0,1))
+    ('D' : ' ' : x) -> replicate (sToI x) (Pos (0,-1))
+    _               -> []
 
 moveTail :: Pos -> Pos -> Pos
 moveTail headPos tailPos
@@ -47,7 +48,7 @@ simulate (move:moves) headPos knots = last updRope : simulate moves updHeadPos u
 main = do 
     inp <- readFile "input.txt"
     let input = lines inp
-        ins = concatMap parseInstructions input 
+        ins = concatMap parseIns input 
         ans1 = length $ nubOrd $ simulate ins zerPos rope1
         ans2 = length $ nubOrd $ simulate ins zerPos rope2
     print ans1
