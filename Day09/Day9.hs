@@ -5,27 +5,18 @@
 -}
 {-# LANGUAGE InstanceSigs,
 GeneralizedNewtypeDeriving #-}
-import Data.Set hiding (map)
-import Prelude hiding (head,tail,sum)
-import Data.List (nub)
+import Data.Containers.ListUtils (nubOrd)
 
-type Vis = Set Pos
 newtype Pos = Pos {pos :: (Int, Int)}
     deriving (Show,Eq,Ord)
-
-sToI :: String -> Int
-sToI = read
 
 instance Num Pos where 
     (+) (Pos (x,y)) (Pos (w,z)) = Pos (x+w,y+z)
     (-) (Pos (x,y)) (Pos (w,z)) = Pos (x-w,y-z)
     abs (Pos (x,y)) = Pos (abs x, abs y)
 
-updateRope :: Pos -> [Pos] -> [Pos]
-updateRope _ [] = []
-updateRope useHead (useTail:xs) = updTail : updateRope updTail xs
-    where 
-        updTail = moveTail useHead useTail
+sToI :: String -> Int
+sToI = read
 
 moveTail :: Pos -> Pos -> Pos
 moveTail headPos tailPos
@@ -35,12 +26,12 @@ moveTail headPos tailPos
         (dx,dy) = pos (headPos - tailPos)
         chebyDist = max (abs dx) (abs dy)
 
-simulateClean :: [Pos] -> Pos -> [Pos] -> [Pos]
-simulateClean [] _ _ = []
-simulateClean (mov:movs) curHe knots = (last updKnots) : simulateClean movs updHe updKnots
+simulate :: [Pos] -> Pos -> [Pos] -> [Pos]
+simulate [] _ _ = []
+simulate (move:moves) headPos knots = last updRope : simulate moves updHeadPos updRope
     where 
-        updHe = curHe + mov
-        updKnots = updateRope updHe knots
+        updHeadPos = headPos + move
+        updRope = tail $ scanl moveTail updHeadPos knots
 
 zerPos = Pos (0,0)
 rope1 = [zerPos]
@@ -57,7 +48,7 @@ main = do
     inp <- readFile "input.txt"
     let input = lines inp
         ins = concatMap getPos input 
-        ans2Clean = size $ fromList $ simulateClean ins zerPos rope2
-        ans1Clean = size $ fromList $ simulateClean ins zerPos rope1
-    print ans1Clean
-    print ans2Clean
+        ans1 = length $ nubOrd $ simulate ins zerPos rope1
+        ans2 = length $ nubOrd $ simulate ins zerPos rope2
+    print ans1
+    print ans2
