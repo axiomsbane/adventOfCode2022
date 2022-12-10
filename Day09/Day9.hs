@@ -6,6 +6,7 @@
 {-# LANGUAGE InstanceSigs,
 GeneralizedNewtypeDeriving #-}
 import Data.Containers.ListUtils (nubOrd)
+import Data.List (splitAt)
 
 newtype Pos = Pos {pos :: (Int, Int)}
     deriving (Show,Eq,Ord)
@@ -45,6 +46,17 @@ simulate (move:moves) headPos knots = last updRope : simulate moves updHeadPos u
         updHeadPos = headPos + move
         updRope = tail $ scanl moveTail updHeadPos knots
 
+-- Try to simplify simulate by converting into scanl 
+-- not working rn for some reason
+-- updateRope :: [Pos] -> Pos -> [Pos]
+-- updateRope rope move = scanl moveTail (headKnot + move) tailKnots
+--     where 
+--         (headKnot, tailKnots) = (head rope, tail rope)
+
+-- solve :: [Pos] -> [Pos] -> Int
+-- solve rope moves = length $ nubOrd
+--                     $ map last
+--                     $ scanl updateRope rope moves
 main = do 
     inp <- readFile "input.txt"
     let input = lines inp
