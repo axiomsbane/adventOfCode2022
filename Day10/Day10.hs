@@ -28,8 +28,8 @@ main = do
     inp <- readFile "input.txt"
     let input = lines inp   
         ins = concatMap parseIns input
-        outPut = scanl (+) 1 ins
-        ans1 = sum $ zipWith (*) inds $ map (outPut !!) indsMinus1
-        crtOutput = chunksOf 40 $ map (solve outPut) duringCycles
+        registerVals = scanl (+) 1 ins
+        ans1 = sum $ zipWith (*) inds $ map (registerVals !!) indsMinus1
+        crtOutput = chunksOf 40 $ map (solve registerVals) duringCycles
     print ans1
     mapM putStrLn crtOutput
